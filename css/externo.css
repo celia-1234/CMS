@@ -1,0 +1,67 @@
+/* From Uiverse.io by Omar-Molotov 
+Estilo del elemento para marcar obras como "favorito" */ 
+/*------ Settings ------*/
+.container {
+  --azulPrusia: #003153;
+  --color: #ffe657;
+  --size: 1.1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 11%;
+  cursor: pointer;
+  font-size: var(--size);
+  user-select: none;
+  fill: var(--color);
+}
+
+.container .save-regular {
+  position: absolute;
+  animation: keyframes-fill 0.5s;
+  transform-origin: top;
+  display: none;
+}
+
+.container .save-solid {
+    position: absolute;
+    animation: keyframes-fill 0.5s;
+    transform-origin: top;
+}
+
+/* ------ On check event ------ */
+.container input:checked ~ .save-regular {
+  display: block;
+}
+
+.container input:checked ~ .save-solid {
+  display: none;
+}
+
+/* ------ Hide the default checkbox ------ */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* ------ Animation ------ */
+@keyframes keyframes-fill {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scaleY(1.2);
+  }
+}
+
+/* ------------ Ajustes para las páginas de detalle de obra -------------- */
+.favorito .container{
+    position: relative;
+    fill: var(--azulPrusia);
+    font-size: 1.4em;
+}
