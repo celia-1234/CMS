@@ -18,20 +18,29 @@
 <?php 
 session_start();
 
+// Supuesto A: la sesión está iniciada
 if(isset($_SESSION['nombre_u'])){
     header("location: ../index.php");
     exit();
 }
 
+// Supuesto no-A: La sesión no está iniciada
 else{
-    if ($_POST['nombre_u'] == 'admin' && $_POST['contra_u'] == '1234'){    
-        $_SESSION['nombre_u'] = $_POST['nombre_u'];
-                
-        header("location: ../index.php");
-        exit();
-    }
 
-    else{
+    // Supuesto no-A / B: Se ha llegado hasta aquí desde el formulario
+    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+        // no-A / B / C: La autenticación del usuario es correcta
+        if ($_POST['nombre_u'] == 'admin' && $_POST['contra_u'] == '1234'){    
+            $_SESSION['nombre_u'] = $_POST['nombre_u'];
+
+            header("location: ../index.php");
+            exit();
+        }
+
+        // no-A / B / no-C: Autenticación incorrecta.
+        // Se informa de la incidencia y se permite volver al login
+        else{
 ?>
 
 <div class="controlSesion">
@@ -41,6 +50,14 @@ else{
 </div>
 
 <?php
+        }
+    }
+
+    // Supuesto no-A / no-B: No se ha llegado hasta aquí desde el formulario de login, sino
+    // introduciendo la dirección en la URL. Se redirige a login.
+    else{
+        header("location: ./login.php");
+        exit();
     }
 }
 

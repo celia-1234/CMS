@@ -18,16 +18,30 @@
 <div class="controlSesion">
     <?php
     session_start();
-    
-    echo "<h3>Has cerrado correctamente la sesión</h3>";
-    
-    setcookie(session_name(),"", 0); // elimina la cookie que se creó en el navegador
-    session_unset(); // vacía la sesión del servidor
-    session_destroy(); // elimina la sesión
 
-?>
+    // Supuesto A: la sesión está iniciada.
+    // Se muestra mensaje confirmando el cierre de sesión y, mediante un enlace, se le permite volver al formulario de login.
+    if(isset($_SESSION['nombre_u'])){
+        echo "<h3>Has cerrado correctamente la sesión</h3>";
+        setcookie(session_name(),"", 0); // elimina la cookie que se creó en el navegador
+        session_unset(); // vacía la sesión del servidor
+        session_destroy(); // elimina la sesión
+    
+
+    ?>
 
     <a href="./login.php">Iniciar sesión</a>
+
+    <?php
+    }
+    
+    // Supuesto no-A: La sesión no está iniciada. Solamente pudo llegar hasta aquí escribiendo la URL. Se le redirige a login.
+    else{
+        header("location: ./login.php");
+        exit();
+    }
+    ?>
+
 
 </div>
     
