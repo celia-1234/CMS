@@ -20,9 +20,10 @@
     session_start();
     
     echo "<h3>Has cerrado correctamente la sesión</h3>";
-
-    session_unset();
-    session_destroy();
+    
+    setcookie(session_name(),"", 0); // elimina la cookie que se creó en el navegador
+    session_unset(); // vacía la sesión del servidor
+    session_destroy(); // elimina la sesión
 
 ?>
 
