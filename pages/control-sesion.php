@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&family=Gruppo&family=Italiana&family=Nixie+One&family=Poiret+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/externo.css" />
+    <link rel="stylesheet" href="../css/customForm.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <title>Inicio de sesión</title>
+    <link rel="icon" type="image/x-icon" href="../media/img_configuracion.png">
+</head>
+<body>
+    
+<?php 
+session_start();
+
+if(isset($_SESSION['nombre_u'])){
+    header("location: ../index.php");
+    exit();
+}
+
+else{
+    if ($_POST['nombre_u'] == 'admin' && $_POST['contra_u'] == '1234'){    
+        $_SESSION['nombre_u'] = $_POST['nombre_u'];
+                
+        header("location: ../index.php");
+        exit();
+    }
+
+    else{
+?>
+
+<div class="controlSesion">
+    <h3>Algo salió mal...</h3>
+    <p>Ha habido un error en el inicio de sesión. Vuelve a introducir tus datos</p>
+    <a href="./login.php">Iniciar sesión</a>
+</div>
+
+<?php
+    }
+}
+
+?>
+
+</body>
+</html>

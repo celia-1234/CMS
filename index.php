@@ -1,116 +1,135 @@
+<?php 
+session_start();
+
+if(!isset($_SESSION['nombre_u'])){
+    header("location: pages/login.php");
+    exit();
+}
+
+?>
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&family=Gruppo&family=Italiana&family=Nixie+One&family=Poiret+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="./css/externo.css" />
-    <link rel="stylesheet" href="./css/customForm.css" />
-    <link rel="stylesheet" href="./css/style.css" />
-    
-    <?php
-      if(($_SERVER['REQUEST_METHOD'] == 'POST')){
-    ?>
-    <style>
-      /* Variables que pueden ser definidas por el cliente */
-      :root{
-        --colorPrincipal: <?= $_POST['color-principal']?>;
-        --colorSecundario: <?= $_POST['color-contraste']?>;
-        --colorFondo: <?= ($_POST['modo-fondo'] == 'claro') ? $_POST['color-fondo'] : '#414553'?>;
-
-        --colorTextos: <?= ($_POST['modo-fondo'] == 'claro') ? 'black' : 'white'?>;
-
-        --fuenteBody2: <?php
-            echo (isset($_POST['fuente-parrafos']))
-              ? match($_POST['fuente-parrafos']){
-                  "poiret" => '"Poiret One", sans-serif',
-                  "times" => '"Times New Roman, Times, serif"',
-                  "verdana" => 'Verdana, Geneva, Tahoma, sans-serif',
-                  "gruppo" => '"Gruppo", sans-serif'
-                }
-              : '"Poiret One", sans-serif' ?>;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&family=Gruppo&family=Italiana&family=Nixie+One&family=Poiret+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./css/externo.css" />
+  <link rel="stylesheet" href="./css/customForm.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+  
+  <?php
+    if(($_SERVER['REQUEST_METHOD'] == 'POST')){
+  /* ===========>>> Recoger datos del formulario, almacenar en $_SESSION */
+    $datospost = ['nombre_sitio', 'descripcion', 'color-principal', 'color-contraste', 'color-fondo', 'modo-fondo', 'fuente-parrafos', 'seccion_qu', 'seccion_ma', 'seccion_fu', 'seccion_ga'];
+    foreach($datospost as $c){
+      if (isset($_POST[$c])){
+        $_SESSION[$c] = $_POST[$c];
       }
-
-      /* Colores de textos */
-      h1, h1, h3, h3, p, a, nav a, table *{
-        color: var(--colorTextos);
+      else {
+        if (isset($_SESSION[$c])){
+          unset($_SESSION[$c]);
+        }
       }
-
-    </style>
-
-    <script src="./js/btnTop.js" type="text/javascript" defer></script>
-
-    <?php
     }
-      // *********** SUBIDA DE ARCHIVO PARA LOGO Y FAVICON ***************
-    if (!empty($_FILES['logo_sitio']) && $_FILES['logo_sitio']['error'] === 0){
-      $nombre_img = $_FILES['logo_sitio']['name'];
-      $ruta_temp = $_FILES['logo_sitio']['tmp_name'];
-      $ruta_img = "./media/".$nombre_img;
-      move_uploaded_file($ruta_temp, $ruta_img);
-    }
+  ?>
 
-    // else if (empty($_FILES['logo_sitio'])){
-    else {
-      $ruta_img = "./media/archivo_no_encontrado.png";
+  <style>
+    /* Variables que pueden ser definidas por el cliente */
+    :root{
+      --colorPrincipal: <?= $_SESSION['color-principal']?>;
+      --colorSecundario: <?= $_SESSION['color-contraste']?>;
+      --colorFondo: <?= ($_SESSION['modo-fondo'] == 'claro') ? $_SESSION['color-fondo'] : '#414553'?>;
+      --colorTextos: <?= ($_SESSION['modo-fondo'] == 'claro') ? 'black' : 'white'?>;
+      --fuenteBody2: <?php
+          echo (isset($_SESSION['fuente-parrafos']))
+            ? match($_SESSION['fuente-parrafos']){
+                "poiret" => '"Poiret One", sans-serif',
+                "times" => '"Times New Roman, Times, serif"',
+                "verdana" => 'Verdana, Geneva, Tahoma, sans-serif',
+                "gruppo" => '"Gruppo", sans-serif'
+              }
+            : '"Poiret One", sans-serif' ?>;
     }
+    /* Colores de textos */
+    h1, h1, h3, h3, p, a, nav a, table *{
+      color: var(--colorTextos);
+    }
+  </style>
+  <script src="./js/btnTop.js" type="text/javascript" defer></script>
+
+
+  <!-- *********** SUBIDA DE ARCHIVO PARA LOGO Y FAVICON *************** -->
+  <?php
+  }
+  $default_img = '';
+  if (!empty($_FILES['logo_sitio']) && $_FILES['logo_sitio']['error'] === 0){
+    $nombre_img = $_FILES['logo_sitio']['name'];
+    $ruta_temp = $_FILES['logo_sitio']['tmp_name'];
+    $ruta_img = "./media/".$nombre_img;
+    move_uploaded_file($ruta_temp, $ruta_img);
+    $_SESSION['ruta_img'] = $ruta_img;
+  }
+  else {
+    $default_img = "./media/archivo_no_encontrado.png";
+  }
+  ?>
       
-      // *********** CONFIGURACIÓN DE LA PESTAÑA DEL NAVEGADOR: FAVICON Y TITLE ***************
-    ?>
-    <title>
+  
+  <!-- *********** CONFIGURACIÓN DE LA PESTAÑA DEL NAVEGADOR: TITLE *************** -->
+  <title>
     <?php 
-      if (isset($_POST['nombre_sitio'])){
-
-        if (!empty($_POST['nombre_sitio'])){
-          echo $_POST['nombre_sitio'];
-        }
-
-        else{
-          echo "Mi sitio web";
-        }
+    if (isset($_SESSION['nombre_sitio'])){
+      if (!empty($_SESSION['nombre_sitio'])){
+        echo $_SESSION['nombre_sitio'];
       }
-
       else{
-        echo "Configura tu sitio web";
+        echo "Mi sitio web";
       }
-      
-    ?>
-    </title>
+    }
+    else{
+      echo "Configura tu sitio web";
+      }
+      ?>
+  </title>
+  
 
-    <?php
-
+  <!-- *********** CONFIGURACIÓN DE LA PESTAÑA DEL NAVEGADOR: FAVICON *************** -->
+  <?php
   if(($_SERVER['REQUEST_METHOD'] == 'POST')){
   ?>
-    <link rel="icon" type="image/x-icon" href="<?= $ruta_img ?>">
+  <link rel="icon" type="image/x-icon" href="<?= $_SESSION['ruta_img'] ?? $default_img ?>">
   <?php
-    } else{
-      // Defino la imagen por defecto que se usará como favicon, antes de que se envíe el formulario
+  } else{
   ?>
-    <link rel="icon" type="image/x-icon" href="./media/img_configuracion.png">
+  <link rel="icon" type="image/x-icon" href="./media/img_configuracion.png">
   <?php
-    }
+  }
   ?>
-  </head>
-  <body>
+</head>
+<body>
 
-  <?php
+<?php
+  if(($_SERVER['REQUEST_METHOD'] == 'POST')){
+?>
+<!-- ************** ELEMENTO FLOTANTE PARA CONFIG / CERRAR ***************** -->
+<div class="flotante">
+  <a href="./index.php">Cambiar aspecto</a>
+  <a href="./pages/cerrar-sesion.php">Cerrar sesión</a>
+</div>
 
-    if(($_SERVER['REQUEST_METHOD'] == 'POST')){
-
-  ?>
-
-    <header>
-      <img class="logo" src="<?= $ruta_img ?>" alt="Logo">
-      <nav>
-        <a class="loc" href="#">Inicio</a>
-        <a href="#">Galería</a>
-        <a href="#contacto">Contacto</a>
-        <a href="#">Área privada</a>
-      </nav>
-    </header>
+<!-- ******************** HEADER *************************** -->
+  <header>
+    <img class="logo" src="<?= $_SESSION['ruta_img'] ?? $default_img ?>" alt="Logo">
+    <nav>
+      <a class="loc" href="#">Inicio</a>
+      <a href="#">Galería</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#">Área privada</a>
+    </nav>
+  </header>
 
     <main>
       <button id="btnTop" title="Volver arriba">↑</button>
@@ -126,23 +145,23 @@
         }*/
         ?>
 
-        <img src="<?= $_FILES['logo_sitio'] ? $ruta_img : ""; ?>" alt="Logo del sitio web" />
+        <img src="<?= $_SESSION['ruta_img'] ?? $default_img ?>" alt="Logo del sitio web" />
         <div class="cartel">
-          <h1><?= (isset($_POST['nombre_sitio']) && !empty($_POST['nombre_sitio'])) ? $_POST['nombre_sitio'] : "Mi sitio web" ?></h1>
+          <h1><?= (isset($_SESSION['nombre_sitio']) && !empty($_SESSION['nombre_sitio'])) ? $_SESSION['nombre_sitio'] : "Mi sitio web" ?></h1>
           <p>
-            <?= (isset($_POST['descripcion']) && !empty($_POST['descripcion'])) ? $_POST['descripcion'] : "Descripción del sitio web" ?>
+            <?= (isset($_SESSION['descripcion']) && !empty($_SESSION['descripcion'])) ? $_SESSION['descripcion'] : "Descripción del sitio web" ?>
           </p>
+
       <?php
-        if(isset($_POST['seccion_ga'])){
+        if(isset($_SESSION['seccion_ga'])){
       ?>
           <a href="#recientes" class="btn-cta seccion_ga">Últimas adquisiciones</a>
       <?php } ?>
-
         </div>
       </section>
 
       <?php
-        if(isset($_POST['seccion_qu'])){
+        if(isset($_SESSION['seccion_qu'])){
       ?>
       <h2>Para quién está pensada esta galería</h2>
       <section class="quien">
@@ -228,7 +247,7 @@
       <?php 
         }
 
-        if(isset($_POST['seccion_ma'])){
+        if(isset($_SESSION['seccion_ma'])){
       ?>
       <h2>Manifiesto</h2>
       <section class="manifiesto">
@@ -296,7 +315,7 @@
       <?php 
         }
 
-        if(isset($_POST['seccion_fu'])){
+        if(isset($_SESSION['seccion_fu'])){
       ?>      
       <h2>Cómo funciona</h2>
       <section class="funcionamiento">
@@ -363,7 +382,7 @@
       <?php 
         }
 
-        if(isset($_POST['seccion_ga'])){
+        if(isset($_SESSION['seccion_ga'])){
       ?>
       <span id="recientes"></span>
 
@@ -775,8 +794,8 @@
       
       <div class="pie_izq">
         
-        <img src="<?= $_FILES['logo_sitio'] ? $ruta_img : ""; ?>" alt="logo">
-        <p><span><?php isset($_POST['nombre_sitio']) ? $_POST['nombre_sitio'] : "Mi sitio web" ?></span></p>
+        <img src="<?= $_SESSION['ruta_img'] ?? $default_img ?>" alt="logo">
+        <p><span><?php isset($_SESSION['nombre_sitio']) ? $_SESSION['nombre_sitio'] : "Mi sitio web" ?></span></p>
         <div class="politicas">
           <a href="#">Política de cookies</a>
           <a href="#">Política de privacidad</a>
@@ -842,7 +861,12 @@
     <?php 
     }
 
-    else {
+    else{
+/* =======================> FORMULARIO DE CONFIGURACIÓN <========================= */
+// Código para debug de lo que envía el formulario
+/*foreach($_SESSION as $campo => $valor){
+           echo $campo." => ".$valor."<br>";
+        }*/
     ?>
 
 <form action="#" class="customForm" method="POST" enctype="multipart/form-data">
@@ -853,12 +877,20 @@
 
         <div class="campo campo_contenido">
           <label for="nombre_sitio">Nombre de la web</label>
-          <input type="text" name="nombre_sitio" id="nombre_sitio" placeholder="Mi web">
+          <input type="text" name="nombre_sitio" id="nombre_sitio"
+            <?php 
+            echo (isset($_SESSION['nombre_sitio'])) ? 'value="'.$_SESSION['nombre_sitio'].'"' : 'placeholder="Mi web"';
+            ?>
+          >
         </div>
 
         <div class="campo campo_contenido campo_textarea">
           <label for="descripcion">Descripción</label>
-          <textarea name="descripcion" id="descripcion" rows="4" placeholder="Un breve texto que defina la web: Nos dedicamos a... / Somos..."></textarea>
+          <textarea name="descripcion" id="descripcion" rows="4"
+            <?php 
+            echo (!isset($_SESSION['descripcion'])) ? 'placeholder="Un breve texto que defina la web: Nos dedicamos a... / Somos...">' : '>'.$_SESSION['descripcion'];
+            ?>
+          </textarea>
         </div>
 
         <div class="campo campo_contenido">
@@ -882,10 +914,29 @@
         <div class="campo campo_contenido">
           <label for="secciones">Secciones de la web</label>
             <div id="contenido">
-              <input type="checkbox" name="seccion_qu" value="seccion_qu" id="secciones">Para quién está pensada</input><br>
-              <input type="checkbox" name="seccion_ma" value="seccion_ma">Manifiesto</input><br>
-              <input type="checkbox" name="seccion_fu" value="seccion_fu">Cómo funciona</input><br>
-              <input type="checkbox" name="seccion_ga" value="seccion_ga">Últimas adquisiciones</input><br>
+
+            <?php
+          /* ---------- Array de secciones de la web ---------- */ 
+          $secciones = [
+            "seccion_qu" => "Para quién está pensada",
+            "seccion_ma" => "Manifiesto",
+            "seccion_fu" => "Cómo funciona",
+            "seccion_ga" => "Últimas adquisiciones"
+          ];
+
+          foreach($secciones as $sec => $valor){
+            ?>
+            
+            <input type="checkbox" name="<?= $sec ?>" value="<?= $sec ?>"
+              <?php echo ($sec == 'seccion_qu') ? 'id="secciones"' : '';
+              echo (isset($_SESSION[$sec])) ? 'checked' : '' ?>
+              ><?= $valor ?>
+            </input><br>
+
+            <?php
+          }
+          ?>
+
             </div>
         </div>
     </div>
@@ -896,33 +947,64 @@
 
         <div class="campo">
           <label for="color-principal">Color principal</label>
-          <input type="color" name="color-principal" id="color-principal" value="#003153">
+          <input type="color" name="color-principal" id="color-principal"
+          value="<?= (!isset($_SESSION['color-principal'])) ? "#003153" : $_SESSION['color-principal'] ?>">
         </div>
 
         <div class="campo">
           <label for="color-contraste">Color de contraste</label>
-          <input type="color" name="color-contraste" id="color-contraste" value="#c5a059">
+          <input type="color" name="color-contraste" id="color-contraste" 
+          value="<?= (!isset($_SESSION['color-contraste'])) ? "#c5a059" : $_SESSION['color-contraste'] ?>">
         </div>
 
         <div class="campo">
           <label for="color-fondo">Color de fondo</label>
-          <input type="color" name="color-fondo" id="color-fondo" value="#f5f5f7">
+          <input type="color" name="color-fondo" id="color-fondo"
+          value="<?= (!isset($_SESSION['color-fondo'])) ? "#f5f5f7" : $_SESSION['color-fondo'] ?>">
         </div>
 
         <div class="campo campo_fuente">
           <label for="fuente-parrafos">Fuente de párrafos</label>
           <select name="fuente-parrafos" id="fuente-parrafos">
-            <option value="poiret">Poiret One</option>
-            <option value="times">Times New Roman</option>
-            <option value="verdana">Verdana</option>
-            <option value="gruppo">Gruppo</option>
+          <?php
+          /* ---------- Array de opciones para fuente de textos ---------- */ 
+          $opciones = [
+            "poiret" => "Poiret One",
+            "times" => "Times New Roman",
+            "verdana" => "Verdana",
+            "gruppo" => "Gruppo"
+          ];
+
+          if (!isset($_SESSION['fuente-parrafos'])) { $_SESSION['fuente-parrafos'] = 'poiret'; }
+
+          foreach($opciones as $clave => $valor){
+            ?>
+            <option value=<?= $clave ?>
+              <?= ($_SESSION['fuente-parrafos'] == $clave) ? 'selected' : '' ?>
+              ><?= $valor ?></option>
+            <?php
+          }
+          ?>
           </select>
         </div>
 
         <div class="campo">
           <label for="modo-fondo">Modo de la página</label>
-          <div><input type="radio" name="modo-fondo" id="modo-fondo" value="claro" checked>Claro</div>
-          <div><input type="radio" name="modo-fondo" id="modo-fondo" value="oscuro">Oscuro</div>
+          <?php
+          /* ---------- Array de opciones para modo claro / oscuro ---------- */ 
+          $modoFondo = ["claro" => 'Claro', "oscuro" => 'Oscuro'];
+
+          if (!isset($_SESSION['modo-fondo'])) { $_SESSION['modo-fondo'] = 'claro'; }
+
+          foreach($modoFondo as $m => $contenido){
+            ?>
+            <div><input type="radio" name="modo-fondo" id="modo-fondo" value=<?= $m ?>
+              <?= ($_SESSION['modo-fondo'] == $m) ? 'checked' : '' ?>
+              ><?= $contenido ?></div>
+            <?php
+          }
+          ?>
+          
         </div>
     </div>
 
@@ -932,8 +1014,6 @@
         </div>
 
 </form>
-
-
 
     <?php
     }
